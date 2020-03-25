@@ -1,8 +1,12 @@
 import requests
+<<<<<<< HEAD
 import zipfile
 import wget
 import re
 import os
+=======
+import re
+>>>>>>> 0d96a259a798287641d82fe8f2f998ed28781bda
 from mycroft import MycroftSkill, intent_file_handler
 
 
@@ -37,9 +41,8 @@ class PootleSync(MycroftSkill):
         #self.writing_sentence(sentence)
         #self.log.info(sentence)
         self.speak_dialog('sync.pootle')
+        self.poodle_loader
 
-    def writing_sentence(self, sentence, filename="test.txt"):
-        sentence = "\n".join(sentence)
         if not os.path.isdir(self.lang_path):
             os.makedirs(self.lang_path)
         fobj_out = open(self.lang_path+filename, "w")
