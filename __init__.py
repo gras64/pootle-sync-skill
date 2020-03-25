@@ -1,4 +1,6 @@
 import requests
+import zipfile
+import wget
 import re
 import os
 from mycroft import MycroftSkill, intent_file_handler
@@ -15,12 +17,15 @@ class PootleSync(MycroftSkill):
 
     @intent_file_handler('sync.pootle.intent')
     def handle_sync_pootle(self, message):
-        self.speak_dialog('sync.pootle')
         self.poodle_loader()
 
     def poodle_loader(self):
         self.log.info("start download")
+        if os.path.isfile(self.file_system.path+"/"+self.lang[:-3]+".zip"):
+            os.remove(self.file_system.path+"/"+self.lang[:-3]+".zip")
         wget.download("https://translate.mycroft.ai/export/?path=/"+self.lang[:-3], self.file_system.path+"/"+self.lang[:-3]+".zip")
+        with zipfile.ZipFile(self.file_system.path+"/"+self.lang[:-3]+".zip",'r') as zfile:
+                zfile.extractall(self.file_system.path)
         ##data = requests.get("https://translate.mycroft.ai/export/?path=/"+self.lang[:-3]+"/mycroft-skills/")
         ##data.encoding = 'utf-8'
         ##sentence = "\n".join(re.findall(r'(msgstr ".*")', data.text)).replace("msgstr", "")
