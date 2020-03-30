@@ -1,22 +1,14 @@
-
 skillMetadata:
   sections:
-    - name: Options << Name of section
+    - name: folder
       fields:
-        - name: internal_python_variable_name
+        - name: lang_path
           type: text
-          label: Setting Friendly Display Name
+          label: set the path for your langfile
           value: ""
-          placeholder: demo prompt in the input box
-    - name: Login << Name of another section
+    - name: sync setup
       fields:
-        - type: label
-          label: Just a little bit of extra info for the user to understand following settings
-        - name: username
-          type: text
-          label: Username
-          value: ""
-        - name: password
-          type: password
-          label: Password
+        - name: synctimer
+          type: number
+          label: time in hours until the next synchronization
           value: ""
