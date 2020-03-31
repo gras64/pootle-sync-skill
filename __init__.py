@@ -12,12 +12,15 @@ class PootleSync(MycroftSkill):
         MycroftSkill.__init__(self)
 
     def initialize(self):
-        if not self.settings.get('lang_path') is None:
+        if self.settings.get('lang_path') is not "":
             self.lang_path = self.settings.get('lang_path')
+            self.log.info("found user folder")
         elif 'translations_dir' in Configuration.get():
             self.lang_path = Configuration.get()['translations_dir']
+            self.log.info("found transaltion folder")
         else:
             self.lang_path = self.file_system.path+"/mycroft-skills/"
+            self.log.info("set default language path")
         if self.settings.get('synctimer') >= 1:
             sync = self.settings.get('synctimer') * 3600
             self.schedule_repeating_event(self.sync_pootle, None, sync,
@@ -30,6 +33,8 @@ class PootleSync(MycroftSkill):
         self.sync_pootle()
 
     def sync_pootle(self):
+        if self.settings.get('synctimer') < 1:
+            self.cancel_scheduled_event('sync_pootle')
         self.poodle_downloader()
         folder = self.file_system.path+"/de/de/mycroft-skills"
         self.find_po(folder)
@@ -45,6 +50,10 @@ class PootleSync(MycroftSkill):
                     skillname = filename[:-6]
                     for data in output:
                         filename = self.lang_path+skillname+"/"+self.lang+"/locale/"+data
+                        #old_data = self.reading_sentence(data, filename)
+                        #if output[data] is old_data:
+                        #    self.log.info("nothing new, skip"+filename)
+                        #else:
                         self.writing_sentence(output[data], data, filename)
 
 
@@ -56,6 +65,14 @@ class PootleSync(MycroftSkill):
         with zipfile.ZipFile(self.file_system.path+"/"+self.lang[:-3]+".zip",'r') as zfile:
                 zfile.extractall(self.file_system.path)
         self.speak_dialog('sync.pootle')
+
+    def reading_sentence(self, data, filename):
+        sentence = []
+        fobj_in = open(filename, "r")
+        for line in fobj_in:
+            sentence = sentence.append(line)
+        fobj_in.close()
+        return sentence
 
     def writing_sentence(self, sentence, data, filename):
         sentence = "\n".join(sentence)
