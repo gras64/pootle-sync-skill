@@ -12,11 +12,11 @@ class PootleSync(MycroftSkill):
         MycroftSkill.__init__(self)
 
     def initialize(self):
-        if not Configuration.get()['translations_dir'] is None:
-            self.lang_path = Configuration.get()['translations_dir']
+        if not self.settings.get('lang_path') is None:
+            self.lang_path = self.settings.get('lang_path')
         else:
-            self.lang_path = self.settings.get('lang_path') \
-                if self.settings.get('lang_path') else self.file_system.path+"/mycroft-skills/"
+            self.lang_path = Configuration.get()['translations_dir'] \
+                if Configuration.get()['translations_dir'] else self.file_system.path+"/mycroft-skills/"
         self.log.info("init")
 
     @intent_file_handler('sync.pootle.intent')
