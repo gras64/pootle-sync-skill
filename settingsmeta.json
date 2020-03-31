@@ -1,0 +1,28 @@
+{
+    "skillMetadata": {
+        "sections": [
+            {
+                "name": "folder",
+                "fields": [
+                    {
+                        "name": "lang_path",
+                        "type": "text",
+                        "label": "set the path for your langfile",
+                        "value": ""
+                    }
+                ]
+            },
+            {
+                "name": "sync setup",
+                "fields": [
+                    {
+                        "name": "synctimer",
+                        "type": "number",
+                        "label": "time in hours until the next synchronization",
+                        "value": ""
+                    }
+                ]
+            }
+        ]
+    }
+}

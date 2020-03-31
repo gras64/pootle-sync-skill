@@ -14,13 +14,21 @@ class PootleSync(MycroftSkill):
     def initialize(self):
         if not self.settings.get('lang_path') is None:
             self.lang_path = self.settings.get('lang_path')
+        elif 'translations_dir' in Configuration.get():
+            self.lang_path = Configuration.get()['translations_dir']
         else:
-            self.lang_path = Configuration.get()['translations_dir'] \
-                if Configuration.get()['translations_dir'] else self.file_system.path+"/mycroft-skills/"
-        self.log.info("init")
+            self.lang_path = self.file_system.path+"/mycroft-skills/"
+        if not self.settings.get('synctimer') is None:
+            sync = self.settings.get('synctimer') * 3600
+            self.schedule_repeating_event(self.sync_pootle, None, sync,
+                                          name='sync_pootle')
 
     @intent_file_handler('sync.pootle.intent')
     def handle_sync_pootle(self, message):
+        self.speak_dialog('sync.pootle')
+        self.sync_pootle()
+
+    def sync_pootle(self):
         self.poodle_downloader()
         folder = self.file_system.path+"/de/de/mycroft-skills"
         self.find_po(folder)
@@ -82,6 +90,7 @@ class PootleSync(MycroftSkill):
         return out_files
 
     def shutdown(self):
+        self.cancel_scheduled_event('sync_pootle')
         super(PootleSync, self).shutdown()
 
 
