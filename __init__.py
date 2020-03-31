@@ -18,10 +18,11 @@ class PootleSync(MycroftSkill):
             self.lang_path = Configuration.get()['translations_dir']
         else:
             self.lang_path = self.file_system.path+"/mycroft-skills/"
-        if not self.settings.get('synctimer') is None:
+        if self.settings.get('synctimer') >= 1:
             sync = self.settings.get('synctimer') * 3600
             self.schedule_repeating_event(self.sync_pootle, None, sync,
                                           name='sync_pootle')
+            self.log.info("start pootdle event every "+str(self.settings.get('synctimer'))+" h")
 
     @intent_file_handler('sync.pootle.intent')
     def handle_sync_pootle(self, message):
