@@ -10,6 +10,12 @@ skill podtle synchronizes the new set of pootle data with your mycroft system. F
 * "there is new in english"
 * "sync the language data"
 
+## Setup
+you can set the path and automatic synchronization in hours
+
+## todo
+* "compare changed files and upload them to translate.mycroft"
+
 ## Credits
 gras64
 
