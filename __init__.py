@@ -3,8 +3,8 @@ import wget
 import os
 from os.path import join, basename, exists
 from mycroft import MycroftSkill, intent_file_handler
+from mycroft.configuration.config import Configuration
 import polib
-#from .PootleSync.mycroft-translate-master.automatitions import extract
 
 
 class PootleSync(MycroftSkill):
@@ -12,8 +12,11 @@ class PootleSync(MycroftSkill):
         MycroftSkill.__init__(self)
 
     def initialize(self):
-        self.lang_path = self.settings.get('lang_path') \
-            if self.settings.get('lang_path') else self.file_system.path+"/mycroft-skills/"
+        if not Configuration.get()['translations_dir'] is None:
+            self.lang_path = Configuration.get()['translations_dir']
+        else:
+            self.lang_path = self.settings.get('lang_path') \
+                if self.settings.get('lang_path') else self.file_system.path+"/mycroft-skills/"
         self.log.info("init")
 
     @intent_file_handler('sync.pootle.intent')

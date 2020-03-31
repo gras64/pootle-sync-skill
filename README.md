@@ -2,10 +2,13 @@
 This skill is for sync language data with pootle
 
 ## About
-Long
+skill podtle synchronizes the new set of pootle data with your mycroft system. From core version 20.2 a second language directory is supported.
 
 ## Examples
 * "Download pootle data"
+* "download new Language data"
+* "there is new in english"
+* "sync the language data"
 
 ## Credits
 gras64

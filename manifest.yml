@@ -9,6 +9,8 @@
    python:
      - requests
      - polib
+     - wget
+     - zipfile
 #     - gensim
 #
 #   # Install packages with the system package manager
