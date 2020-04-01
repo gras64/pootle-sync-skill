@@ -1,6 +1,7 @@
 import zipfile
 import wget
 import os
+from shutil import rmtree
 from os.path import join, basename, exists
 from mycroft import MycroftSkill, intent_file_handler
 from mycroft.configuration.config import Configuration
@@ -12,7 +13,7 @@ class PootleSync(MycroftSkill):
         MycroftSkill.__init__(self)
 
     def initialize(self):
-        if self.settings.get('lang_path') is not "":
+        if self.settings.get('lang_path') is not None:
             self.lang_path = self.settings.get('lang_path')
             self.log.info("found user folder")
         elif 'translations_dir' in Configuration.get():
@@ -35,35 +36,44 @@ class PootleSync(MycroftSkill):
         self.sync_pootle()
 
     def sync_pootle(self):
-        if self.settings.get('synctimer') < 1:
-            self.cancel_scheduled_event('sync_pootle')
         self.poodle_downloader()
         folder = self.file_system.path+"/de/de/mycroft-skills"
-        self.find_po(folder)
+        oldfolder = self.file_system.path+"-old/de/de/mycroft-skills"
+        self.find_po(folder, oldfolder)
         #self.log.info(translation)
 
-    def find_po(self, folder):
+    def find_po(self, folder, oldfolder):
+        # find, match old and new files. write only new files
         for root, dirs, files in os.walk(folder):
             for f in files:
                 filename = os.path.join(root, f)
                 if filename.endswith('.po'):
-                    output = self.parse_po_file(filename)
+                    output = self.parse_po_file(filename) #new
                     filename = filename.replace(folder+"/", '')
+                    if os.path.isfile(folder+"/"+filename):
+                        oldoutput = self.parse_po_file(folder+"/"+filename) #old
+                    else:
+                        oldoutput = {}
                     skillname = filename[:-6]
-                    for data in output:
-                        filename = self.lang_path+skillname+"/"+self.lang+"/locale/"+data
-                        #old_data = self.reading_sentence(data, filename)
-                        #if output[data] is old_data:
-                        #    self.log.info("nothing new, skip"+filename)
-                        #else:
-                        self.writing_sentence(output[data], data, filename)
+                    if output == oldoutput:
+                        self.log.info("new data for "+skillname)
+                        for data in output:
+                            filename = self.lang_path+skillname+"/"+self.lang+"/locale/"+data
+                            self.writing_sentence(output[data], data, filename)
+                    else:
+                        self.log.info("nothing new for "+skillname)
 
 
     def poodle_downloader(self):
+        #move files to -old and download new files vor match
         self.log.info("start download")
         if os.path.isfile(self.file_system.path+"/"+self.lang[:-3]+".zip"):
             os.remove(self.file_system.path+"/"+self.lang[:-3]+".zip")
         wget.download("https://translate.mycroft.ai/export/?path=/"+self.lang[:-3], self.file_system.path+"/"+self.lang[:-3]+".zip")
+        if os.path.exists(self.file_system.path+"/"+self.lang[:-3]):
+            if os.path.exists(self.file_system.path+"/"+self.lang[:-3]+"-old"):
+                rmtree(self.file_system.path+"/"+self.lang[:-3]+"-old")
+            os.rename(self.file_system.path+"/"+self.lang[:-3], self.file_system.path+"/"+self.lang[:-3]+"-old")
         with zipfile.ZipFile(self.file_system.path+"/"+self.lang[:-3]+".zip",'r') as zfile:
                 zfile.extractall(self.file_system.path)
         self.speak_dialog('sync.pootle')
