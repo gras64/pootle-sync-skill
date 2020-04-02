@@ -38,7 +38,7 @@ class PootleSync(MycroftSkill):
     def sync_pootle(self):
         self.poodle_downloader()
         folder = self.file_system.path+"/de/de/mycroft-skills"
-        oldfolder = self.file_system.path+"-old/de/de/mycroft-skills"
+        oldfolder = self.file_system.path+"/de-old/de/mycroft-skills"
         self.find_po(folder, oldfolder)
         #self.log.info(translation)
 
@@ -50,18 +50,17 @@ class PootleSync(MycroftSkill):
                 if filename.endswith('.po'):
                     output = self.parse_po_file(filename) #new
                     filename = filename.replace(folder+"/", '')
-                    if os.path.isfile(folder+"/"+filename):
-                        oldoutput = self.parse_po_file(folder+"/"+filename) #old
+                    if os.path.isfile(oldfolder+"/"+filename):
+                        oldoutput = self.parse_po_file(oldfolder+"/"+filename) #old
                     else:
                         oldoutput = {}
                     skillname = filename[:-6]
-                    if output == oldoutput:
-                        self.log.info("new data for "+skillname)
-                        for data in output:
-                            filename = self.lang_path+skillname+"/"+self.lang+"/locale/"+data
-                            self.writing_sentence(output[data], data, filename)
-                    else:
-                        self.log.info("nothing new for "+skillname)
+                    for key in list(output.keys()):
+                        if not key in list(oldoutput.keys()):
+                            filename = self.lang_path+skillname+"/"+self.lang+"/locale/"+key
+                            self.writing_sentence(output[key], key, filename)
+                        else:
+                            self.log.info("nothing new for "+skillname)
 
 
     def poodle_downloader(self):
