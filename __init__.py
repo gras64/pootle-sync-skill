@@ -13,7 +13,7 @@ class PootleSync(MycroftSkill):
         MycroftSkill.__init__(self)
 
     def initialize(self):
-        if self.settings.get('lang_path') is not None:
+        if self.settings.get('lang_path') is not "":
             self.lang_path = self.settings.get('lang_path')
             self.log.info("found user folder")
         elif 'translations_dir' in Configuration.get():
