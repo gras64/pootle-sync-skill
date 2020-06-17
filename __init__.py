@@ -37,8 +37,8 @@ class PootleSync(MycroftSkill):
 
     def sync_pootle(self):
         self.poodle_downloader()
-        if self.lang is "en-us": #full english data in en-GB
-            folder = self.file_system.path+"/"+self.lang[:2]+"/"+self.lang[:2]+"-GB/mycroft-skills"
+        if self.lang == "en-us": #full english data in en-GB
+            folder = self.file_system.path+"/"+self.lang[:2]+"/"+self.lang[:2]+"_GB/mycroft-skills"
         else:
             folder = self.file_system.path+"/"+self.lang[:2]+"/"+self.lang[:2]+"/mycroft-skills"
         oldfolder = self.file_system.path+"/"+self.lang[:2]+"-old/"+self.lang[:2]+"/mycroft-skills"
@@ -57,7 +57,7 @@ class PootleSync(MycroftSkill):
                         oldoutput = self.parse_po_file(oldfolder+"/"+filename) #old
                     else:
                         oldoutput = {}
-                    skillname = filename[:-6]
+                    skillname = filename.replace("-"+self.lang[:2]+".po", "").replace("-en_GB.po", "") ####### todo
                     for key in list(output.keys()):
                         if not key in list(oldoutput.keys()):
                             filename = self.lang_path+skillname+"/"+self.lang+"/locale/"+key
