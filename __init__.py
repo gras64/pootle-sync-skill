@@ -37,7 +37,10 @@ class PootleSync(MycroftSkill):
 
     def sync_pootle(self):
         self.poodle_downloader()
-        folder = self.file_system.path+"/"+self.lang[:2]+"/"+self.lang[:2]+"/mycroft-skills"
+        if self.lang is "en-us": #full english data in en-GB
+            folder = self.file_system.path+"/"+self.lang[:2]+"/"+self.lang[:2]+"-GB/mycroft-skills"
+        else:
+            folder = self.file_system.path+"/"+self.lang[:2]+"/"+self.lang[:2]+"/mycroft-skills"
         oldfolder = self.file_system.path+"/"+self.lang[:2]+"-old/"+self.lang[:2]+"/mycroft-skills"
         self.find_po(folder, oldfolder)
         #self.log.info(translation)
