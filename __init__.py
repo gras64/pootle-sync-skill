@@ -37,8 +37,8 @@ class PootleSync(MycroftSkill):
 
     def sync_pootle(self):
         self.poodle_downloader()
-        folder = self.file_system.path+"/de/de/mycroft-skills"
-        oldfolder = self.file_system.path+"/de-old/de/mycroft-skills"
+        folder = self.file_system.path+"/"+self.lang[:2]+"/"+self.lang[:2]+"/mycroft-skills"
+        oldfolder = self.file_system.path+"/"+self.lang[:2]+"-old/"+self.lang[:2]+"/mycroft-skills"
         self.find_po(folder, oldfolder)
         #self.log.info(translation)
 
@@ -66,14 +66,14 @@ class PootleSync(MycroftSkill):
     def poodle_downloader(self):
         #move files to -old and download new files vor match
         self.log.info("start download")
-        if os.path.isfile(self.file_system.path+"/"+self.lang[:-3]+".zip"):
-            os.remove(self.file_system.path+"/"+self.lang[:-3]+".zip")
-        wget.download("https://translate.mycroft.ai/export/?path=/"+self.lang[:-3], self.file_system.path+"/"+self.lang[:-3]+".zip")
-        if os.path.exists(self.file_system.path+"/"+self.lang[:-3]):
-            if os.path.exists(self.file_system.path+"/"+self.lang[:-3]+"-old"):
-                rmtree(self.file_system.path+"/"+self.lang[:-3]+"-old")
-            os.rename(self.file_system.path+"/"+self.lang[:-3], self.file_system.path+"/"+self.lang[:-3]+"-old")
-        with zipfile.ZipFile(self.file_system.path+"/"+self.lang[:-3]+".zip",'r') as zfile:
+        if os.path.isfile(self.file_system.path+"/"+self.lang[:2]+".zip"):
+            os.remove(self.file_system.path+"/"+self.lang[:2]+".zip")
+        wget.download("https://translate.mycroft.ai/export/?path=/"+self.lang[:2], self.file_system.path+"/"+self.lang[:2]+".zip")
+        if os.path.exists(self.file_system.path+"/"+self.lang[:2]):
+            if os.path.exists(self.file_system.path+"/"+self.lang[:2]+"-old"):
+                rmtree(self.file_system.path+"/"+self.lang[:2]+"-old")
+            os.rename(self.file_system.path+"/"+self.lang[:2], self.file_system.path+"/"+self.lang[:2]+"-old")
+        with zipfile.ZipFile(self.file_system.path+"/"+self.lang[:2]+".zip",'r') as zfile:
                 zfile.extractall(self.file_system.path)
         self.speak_dialog('sync.pootle')
 
